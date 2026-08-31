@@ -4,6 +4,11 @@
   "description": "Bot de wahtsapp open source para MVP o pequeños negocios",
   "main": "app.js",
   "private": true,
+  "packageManager": "pnpm@11.24.0",
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=11"
+  },
   "scripts": {
     "clean": "npx lerna clean --y",
     "commit": "git-cz",
