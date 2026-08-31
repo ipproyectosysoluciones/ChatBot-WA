@@ -1,0 +1,57 @@
+# ChatBot-WA / BuilderBot — Development override
+# Spec §Development Profile
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+
+services:
+    # --------------------------------------------------------
+    # Bot — debug port, hot reload, verbose logging
+    # --------------------------------------------------------
+    bot:
+        build:
+            target: bot
+        # Re-enable entrypoint so we can run dev tooling
+        command:
+            [
+                'sh',
+                '-c',
+                'pnpm install --filter @builderbot/bot --filter @builderbot/manager && pnpm --filter @builderbot/bot dev',
+            ]
+        # Source mount for hot reload (spec §Development Profile)
+        volumes:
+            - ./packages:/app/packages
+            - ./assets:/app/assets
+            - ./data/bot:/app/data
+        # Node inspector for VS Code / Chrome DevTools
+        ports:
+            - '3000:3000'
+            - '9229:9229' # Node.js debug port
+        environment:
+            - NODE_ENV=development
+            - DEBUG_PORT=9229
+            - DEBUG=*
+            - LOG_LEVEL=debug
+            - TS_NODE_TRANSPILE_ONLY=true
+        # Disable restart loop while developing
+        restart: 'no'
+
+    # --------------------------------------------------------
+    # Postgres — local data override for dev (spec §Development Profile)
+    # --------------------------------------------------------
+    postgres:
+        volumes:
+            - ./data/postgres:/var/lib/postgresql/data
+
+    # --------------------------------------------------------
+    # MongoDB — local data override for dev
+    # --------------------------------------------------------
+    mongodb:
+        volumes:
+            - ./data/mongo:/data/db
+
+    # --------------------------------------------------------
+    # Redis — local data override for dev
+    # --------------------------------------------------------
+    redis:
+        command: redis-server --appendonly yes --save ""
+        volumes:
+            - ./data/redis:/data
