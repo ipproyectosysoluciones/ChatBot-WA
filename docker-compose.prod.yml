@@ -1,0 +1,99 @@
+# ChatBot-WA / BuilderBot — Production override
+# Spec §Production Profile
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+    # --------------------------------------------------------
+    # Bot — resource limits, non-root, restart always, no mounts
+    # --------------------------------------------------------
+    bot:
+        build:
+            target: production
+        # Production deploy stage only; no source mounts
+        deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 1G
+                reservations:
+                    cpus: '0.25'
+                    memory: 256M
+        restart: unless-stopped
+        environment:
+            - NODE_ENV=production
+            - DEBUG_PORT=
+        read_only: true # spec §Production Profile: read-only root fs
+        tmpfs:
+            - /tmp:size=64M,mode=1777
+        volumes:
+            - bot_assets:/app/assets
+        # Non-root: Dockerfile already sets USER nodejs (uid 1001)
+        user: '1001:1001'
+        logging:
+            driver: json-file
+            options:
+                max-size: '50m'
+                max-file: '5'
+                compress: 'true'
+
+    # --------------------------------------------------------
+    # PostgreSQL — production limits
+    # --------------------------------------------------------
+    postgres:
+        deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 512M
+                reservations:
+                    cpus: '0.1'
+                    memory: 128M
+        restart: unless-stopped
+        logging:
+            driver: json-file
+            options:
+                max-size: '50m'
+                max-file: '5'
+
+    # --------------------------------------------------------
+    # MongoDB — production limits
+    # --------------------------------------------------------
+    mongodb:
+        deploy:
+            resources:
+                limits:
+                    cpus: '1.0'
+                    memory: 1G
+                reservations:
+                    cpus: '0.25'
+                    memory: 256M
+        restart: unless-stopped
+        logging:
+            driver: json-file
+            options:
+                max-size: '100m'
+                max-file: '5'
+
+    # --------------------------------------------------------
+    # Redis — production limits + persistence
+    # --------------------------------------------------------
+    redis:
+        deploy:
+            resources:
+                limits:
+                    cpus: '0.5'
+                    memory: 256M
+                reservations:
+                    cpus: '0.1'
+                    memory: 64M
+        restart: unless-stopped
+        logging:
+            driver: json-file
+            options:
+                max-size: '50m'
+                max-file: '5'
+        volumes:
+            - redis_data:/data
+
+# Named volumes remain (postgres_data/mongo_data/redis_data from base)
+# No additional volumes defined — base compose is authoritative

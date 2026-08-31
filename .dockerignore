@@ -1,0 +1,56 @@
+# .dockerignore — excludes from Docker build context
+# Matches .gitignore exclusions + build artifacts
+
+node_modules
+packages/*/node_modules
+packages/*/dist
+packages/*/*/dist
+dist
+*.log
+.log
+npm-debug.log
+yarn-error.log
+pnpm-debug.log
+.git
+.gitignore
+README.md
+CHANGELOG.md
+.c8rc.json
+.eslintignore
+lint-report.json
+coverage
+.nyc_output
+*.swp
+*.swo
+.DS_Store
+*.tgz
+.env
+
+# Test directories and fixtures (heavy, not needed in build)
+__tests__
+_test_
+*test*
+
+# Config files that vary per environment
+packages/*/config.json
+packages/cli/config.json
+
+# Token / session files
+session.json
+tokens
+media
+mediaSend
+chats
+
+# Docs and IDE settings
+docs
+.vscode
+.idea
+*.md
+
+# CI / lint / formatting caches
+.nx
+.nx-cache
+.cache
+.eslintcache
+.prettercache
