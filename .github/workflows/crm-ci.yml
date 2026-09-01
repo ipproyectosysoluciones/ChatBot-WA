@@ -32,7 +32,9 @@ jobs:
         timeout-minutes: 5
         steps:
             - name: Checkout
-              uses: actions/checkout@f4f6aad9aa0d61aae38bea1ad8f88fbef9057cf7 # v4
+              uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+              with:
+                  persist-credentials: false
 
             - name: Set up Node.js
               uses: actions/setup-node@8f152de45cc393bb48ce5d89ef392b9ba8b5f6d9 # v4
@@ -92,7 +94,9 @@ jobs:
                     - 5432:5432
         steps:
             - name: Checkout
-              uses: actions/checkout@f4f6aad9aa0d61aae38bea1ad8f88fbef9057cf7 # v4
+              uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+              with:
+                  persist-credentials: false
 
             - name: SQL dry-run
               run: |
@@ -115,7 +119,9 @@ jobs:
         timeout-minutes: 5
         steps:
             - name: Checkout
-              uses: actions/checkout@f4f6aad9aa0d61aae38bea1ad8f88fbef9057cf7 # v4
+              uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
+              with:
+                  persist-credentials: false
 
             - name: Validate compose config
               run: |
