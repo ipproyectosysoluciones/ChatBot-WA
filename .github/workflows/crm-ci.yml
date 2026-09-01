@@ -35,9 +35,10 @@ jobs:
               uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
               with:
                   persist-credentials: false
+                  submodules: false
 
             - name: Set up Node.js
-              uses: actions/setup-node@8f152de45cc393bb48ce5d89ef392b9ba8b5f6d9 # v4
+              uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
               with:
                   node-version: ${{ env.NODE_VERSION }}
 
@@ -59,7 +60,7 @@ jobs:
                         const json = JSON.parse(fs.readFileSync(fp, 'utf8'));
                         const hasNodes = Array.isArray(json.nodes);
                         const hasName = typeof json.name === 'string';
-                        console.log('PASS ' + file + ': nodes=' + (json.nodes?.length ?? 0) + ' name=\"' + (json.name || '') + '\"');
+                        console.log('PASS ' + file + ': nodes=' + (json.nodes?.length ?? 0) + ' name="' + (json.name || '') + '"');
                         if (!hasNodes) errors.push(file + ' missing nodes array');
                         if (!hasName) errors.push(file + ' missing name field');
                       } catch (e) {
@@ -97,10 +98,10 @@ jobs:
               uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
               with:
                   persist-credentials: false
+                  submodules: false
 
             - name: SQL dry-run
               run: |
-                  # Simulate the migration environment by setting search_path
                   docker compose exec -T postgres psql \
                     -U builderbot \
                     -d builderbot \
@@ -122,6 +123,7 @@ jobs:
               uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4
               with:
                   persist-credentials: false
+                  submodules: false
 
             - name: Validate compose config
               run: |
