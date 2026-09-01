@@ -1,0 +1,123 @@
+name: 'CRM Workflows CI'
+
+on:
+    push:
+        branches:
+            - '**'
+        paths:
+            - 'packages/crm-workflows/**'
+            - 'docker-compose.yml'
+            - '.github/workflows/crm-ci.yml'
+    pull_request:
+        paths:
+            - 'packages/crm-workflows/**'
+            - 'docker-compose.yml'
+            - '.github/workflows/crm-ci.yml'
+
+concurrency:
+    group: ${{ github.workflow }}-${{ github.ref }}
+    cancel-in-progress: true
+
+env:
+    NODE_VERSION: '22'
+
+permissions:
+    contents: read
+    pull-requests: read
+
+jobs:
+    validate-workflow-json:
+        name: 'Parse n8n workflow JSON files'
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - name: Checkout
+              uses: actions/checkout@f4f6aad9aa0d61aae38bea1ad8f88fbef9057cf7 # v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@8f152de45cc393bb48ce5d89ef392b9ba8b5f6d9 # v4
+              with:
+                  node-version: ${{ env.NODE_VERSION }}
+
+            - name: Parse workflow JSON files
+              run: |
+                  node -e "
+                    const fs = require('fs');
+                    const path = require('path');
+                    const dir = 'packages/crm-workflows/workflows';
+                    const files = fs.readdirSync(dir).filter(f => f.endsWith('.json'));
+                    if (files.length === 0) {
+                      console.error('No workflow JSON files found in ' + dir);
+                      process.exit(1);
+                    }
+                    const errors = [];
+                    for (const file of files) {
+                      const fp = path.join(dir, file);
+                      try {
+                        const json = JSON.parse(fs.readFileSync(fp, 'utf8'));
+                        const hasNodes = Array.isArray(json.nodes);
+                        const hasName = typeof json.name === 'string';
+                        console.log('PASS ' + file + ': nodes=' + (json.nodes?.length ?? 0) + ' name=\"' + (json.name || '') + '\"');
+                        if (!hasNodes) errors.push(file + ' missing nodes array');
+                        if (!hasName) errors.push(file + ' missing name field');
+                      } catch (e) {
+                        console.error('FAIL ' + file + ': ' + e.message);
+                        errors.push(file + ': ' + e.message);
+                      }
+                    }
+                    if (errors.length > 0) {
+                      console.error('Validation errors:', errors.join('; '));
+                      process.exit(1);
+                    }
+                    console.log('All ' + files.length + ' workflow files are valid JSON.');
+                  "
+
+    sql-dry-run:
+        name: 'SQL migration dry-run'
+        runs-on: ubuntu-latest
+        timeout-minutes: 10
+        services:
+            postgres:
+                image: postgres:16-alpine
+                env:
+                    POSTGRES_USER: builderbot
+                    POSTGRES_DB: builderbot
+                    POSTGRES_PASSWORD: builderbot
+                options: >-
+                    --health-cmd "pg_isready"
+                    --health-interval 10s
+                    --health-timeout 5s
+                    --health-retries 5
+                ports:
+                    - 5432:5432
+        steps:
+            - name: Checkout
+              uses: actions/checkout@f4f6aad9aa0d61aae38bea1ad8f88fbef9057cf7 # v4
+
+            - name: SQL dry-run
+              run: |
+                  # Simulate the migration environment by setting search_path
+                  docker compose exec -T postgres psql \
+                    -U builderbot \
+                    -d builderbot \
+                    -v ON_ERROR_STOP=1 \
+                    -c "\set ECHO none" \
+                    -f /dev/stdin < packages/crm-workflows/sql/001_crm_events.sql || {
+                      echo "Trying direct postgres service...";
+                      PGPASSWORD=builderbot psql -h localhost -U builderbot -d builderbot -f packages/crm-workflows/sql/001_crm_events.sql;
+                    }
+              env:
+                  PGPASSWORD: builderbot
+
+    compose-config-check:
+        name: 'Docker Compose config validity'
+        runs-on: ubuntu-latest
+        timeout-minutes: 5
+        steps:
+            - name: Checkout
+              uses: actions/checkout@f4f6aad9aa0d61aae38bea1ad8f88fbef9057cf7 # v4
+
+            - name: Validate compose config
+              run: |
+                  docker compose config --quiet
+                  echo "docker-compose.yml is valid YAML and renders correctly."
