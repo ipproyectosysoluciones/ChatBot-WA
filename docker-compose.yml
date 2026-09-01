@@ -116,7 +116,7 @@ services:
             retries: 5
             start_period: 10s
 
-# --------------------------------------------------------
+    # --------------------------------------------------------
     # --------------------------------------------------------
     # n8n — CRM workflow engine (webhook + Google Calendar/Sheets)
     # --------------------------------------------------------
@@ -140,8 +140,8 @@ services:
             - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
             - GOOGLE_SHEETS_ID=${GOOGLE_SHEETS_ID}
         volumes:
-            - "./packages/crm-workflows:/home/node/.n8n/workflows:ro"
-            - "./secrets/google-service-account.json:/home/node/.n8n/gsa.json:ro"
+            - './packages/crm-workflows:/home/node/.n8n/workflows:ro'
+            - './secrets/google-service-account.json:/home/node/.n8n/gsa.json:ro'
         depends_on:
             postgres:
                 condition: service_healthy

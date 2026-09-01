@@ -64,8 +64,16 @@ test('T2.AC2 — migration declares crm_events table with required columns', () 
 
 test('T2.AC3 — migration declares both required indexes', () => {
     const sql = readFileSync(MIGRATION_PATH, 'utf8').toLowerCase()
-    assert.match(sql, /create\s+index\s+(if\s+not\s+exists\s+)?event_type_idx\s+on\s+crm_events\s*\(\s*event_type\s*\)/, 'event_type_idx missing')
-    assert.match(sql, /create\s+index\s+(if\s+not\s+exists\s+)?created_at_idx\s+on\s+crm_events\s*\(\s*created_at\s*\)/, 'created_at_idx missing')
+    assert.match(
+        sql,
+        /create\s+index\s+(if\s+not\s+exists\s+)?event_type_idx\s+on\s+crm_events\s*\(\s*event_type\s*\)/,
+        'event_type_idx missing'
+    )
+    assert.match(
+        sql,
+        /create\s+index\s+(if\s+not\s+exists\s+)?created_at_idx\s+on\s+crm_events\s*\(\s*created_at\s*\)/,
+        'created_at_idx missing'
+    )
 })
 
 test('T2.AC4 — migration documents the table with a COMMENT', () => {
@@ -81,7 +89,7 @@ test('T2.AC5 — migration parses cleanly against the running postgres (dry-run)
     try {
         out = execSync(
             'docker compose exec -T postgres psql -U ${DB_USER:-builderbot} -d ${DB_NAME:-builderbot} -v ON_ERROR_STOP=1 -c "\\set ECHO none" -f /dev/stdin < packages/crm-workflows/sql/001_crm_events.sql',
-            { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] },
+            { encoding: 'utf8', stdio: ['pipe', 'pipe', 'pipe'] }
         )
     } catch (e: any) {
         // When docker / compose / postgres is not available this test is RED.

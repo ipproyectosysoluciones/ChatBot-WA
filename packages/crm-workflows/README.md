@@ -57,9 +57,9 @@ git check-ignore secrets/google-service-account.json
    **Library** → enable **Google Calendar API** and **Google Sheets API**.
 2. **IAM & Admin** → **Service Accounts** → **Create Service Account**.
 3. Grant the service account these roles on the target resources:
-   - On the target Calendar: **Calendar** ▸ `Make changes to events`
-     (equivalent to `roles/calendar.editor`).
-   - On the target Sheet: **Editor** (`roles/editor`).
+    - On the target Calendar: **Calendar** ▸ `Make changes to events`
+      (equivalent to `roles/calendar.editor`).
+    - On the target Sheet: **Editor** (`roles/editor`).
 4. After creating, open the service account → **Keys** → **Add Key** →
    **Create new key** → **JSON**. Save the downloaded file to
    `secrets/google-service-account.json` (project root).
@@ -69,14 +69,14 @@ git check-ignore secrets/google-service-account.json
 
 ### Required env vars (see `.env.example`)
 
-| Variable | Example | Notes |
-| --- | --- | --- |
-| `CRM_WEBHOOK_SECRET` | random 32+ char string | compared constant-time by webhook |
-| `GOOGLE_APPLICATION_CREDENTIALS` | `/home/node/.n8n/gsa.json` | path inside the n8n container |
-| `GOOGLE_CALENDAR_ID` | `<id>@group.calendar.google.com` | shared with the service account |
-| `GOOGLE_SHEETS_ID` | `<spreadsheet-id>` | from the Sheet URL |
-| `N8N_HOST` | `n8n.internal` | internal DNS name on the bridge network |
-| `WEBHOOK_URL` | `http://n8n:5678/webhook` | used by n8n when building absolute webhook URLs |
+| Variable                         | Example                          | Notes                                           |
+| -------------------------------- | -------------------------------- | ----------------------------------------------- |
+| `CRM_WEBHOOK_SECRET`             | random 32+ char string           | compared constant-time by webhook               |
+| `GOOGLE_APPLICATION_CREDENTIALS` | `/home/node/.n8n/gsa.json`       | path inside the n8n container                   |
+| `GOOGLE_CALENDAR_ID`             | `<id>@group.calendar.google.com` | shared with the service account                 |
+| `GOOGLE_SHEETS_ID`               | `<spreadsheet-id>`               | from the Sheet URL                              |
+| `N8N_HOST`                       | `n8n.internal`                   | internal DNS name on the bridge network         |
+| `WEBHOOK_URL`                    | `http://n8n:5678/webhook`        | used by n8n when building absolute webhook URLs |
 
 ## Operational notes
 
