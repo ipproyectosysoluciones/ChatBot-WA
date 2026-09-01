@@ -75,3 +75,13 @@ nonExistingFilePath
 /packages/provider-telegram/*_sessions
 /packages/provider-baileys/*.png
 /packages/provider-web-whatsapp/.wwebjs_auth/*
+.env
+*.local.json
+.env.local
+.env.production
+# CRM secrets (n8n service-account key)
+secrets/
+*.local.json
+.env
+.env.local
+.env.production

@@ -1,0 +1,66 @@
+{
+    "name": "Appointment Handler",
+    "nodes": [
+        {
+            "parameters": {
+                "resource": "calendar",
+                "operation": "create",
+                "calendarId": "={{ $env.GOOGLE_CALENDAR_ID }}",
+                "start": "={{ $json.payload.start_time }}",
+                "end": "={{ $json.payload.end_time }}",
+                "summary": "={{ $json.payload.title || 'Appointment' }}",
+                "description": "={{ $json.payload.notes || '' }}"
+            },
+            "name": "Google Calendar Create",
+            "type": "n8n-nodes-base.googleCalendar",
+            "typeVersion": 1,
+            "position": [250, 300]
+        },
+        {
+            "parameters": {
+                "resource": "calendar",
+                "operation": "patch",
+                "calendarId": "={{ $env.GOOGLE_CALENDAR_ID }}",
+                "eventId": "={{ $json.google_calendar_event_id }}",
+                "start": "={{ $json.payload.start_time }}",
+                "end": "={{ $json.payload.end_time }}",
+                "summary": "={{ $json.payload.title }}"
+            },
+            "name": "Google Calendar Patch",
+            "type": "n8n-nodes-base.googleCalendar",
+            "typeVersion": 1,
+            "position": [450, 450]
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "tableName": "crm_events",
+                "columns": "event_type,payload_json,google_calendar_event_id"
+            },
+            "name": "PG Insert Event",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2,
+            "position": [650, 300]
+        },
+        {
+            "parameters": {
+                "conditions": {
+                    "conditions": [
+                        { "id": "event_type", "value": "appointment.created", "operator": "equals" },
+                        { "id": "updated", "value": "appointment.updated", "operator": "equals" }
+                    ]
+                }
+            },
+            "name": "Branch Appointment Type",
+            "type": "n8n-nodes-base.if",
+            "typeVersion": 2,
+            "position": [850, 300]
+        }
+    ],
+    "connections": {
+        "Google Calendar Create": { "main": [[{ "node": "PG Insert Event", "type": "main", "index": 0 }]] },
+        "Branch Appointment Type": { "main": [[{ "node": "Google Calendar Patch", "type": "main", "index": 0 }]] }
+    },
+    "tags": ["crm", "appointment", "calendar"],
+    "meta": { "instanceId": "crm-container-batch3" }
+}

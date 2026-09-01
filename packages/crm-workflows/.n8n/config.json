@@ -1,0 +1,11 @@
+{
+  "executions": {
+    "saveDataOnError": "all",
+    "saveDataOnSuccess": "all"
+  },
+  "credentials": {
+    "overwrite": {
+      "endpoint": ""
+    }
+  }
+}

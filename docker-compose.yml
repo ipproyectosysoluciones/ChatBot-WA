@@ -116,7 +116,42 @@ services:
             retries: 5
             start_period: 10s
 
-# --------------------------------------------------------
+    # --------------------------------------------------------
+    # --------------------------------------------------------
+    # n8n — CRM workflow engine (webhook + Google Calendar/Sheets)
+    # --------------------------------------------------------
+    n8n:
+        image: n8nio/n8n:1.0.0
+        container_name: builderbot-n8n
+        restart: unless-stopped
+        networks:
+            - builderbot-network
+        environment:
+            - N8N_BASIC_AUTH_ACTIVE=true
+            - WEBHOOK_URL=${WEBHOOK_URL:-http://n8n:5678/webhook}
+            - DB_TYPE=postgresdb
+            - DB_POSTGRESDB_HOST=${DB_HOST:-postgres}
+            - DB_POSTGRESDB_PORT=${DB_PORT:-5432}
+            - DB_POSTGRESDB_DATABASE=${DB_NAME:-builderbot}
+            - DB_POSTGRESDB_USER=${DB_USER:-builderbot}
+            - DB_POSTGRESDB_PASSWORD=${DB_PASSWORD:-changeme}
+            - CRM_WEBHOOK_SECRET=${CRM_WEBHOOK_SECRET}
+            - GOOGLE_APPLICATION_CREDENTIALS=/home/node/.n8n/gsa.json
+            - GOOGLE_CALENDAR_ID=${GOOGLE_CALENDAR_ID}
+            - GOOGLE_SHEETS_ID=${GOOGLE_SHEETS_ID}
+        volumes:
+            - './packages/crm-workflows:/home/node/.n8n/workflows:ro'
+            - './secrets/google-service-account.json:/home/node/.n8n/gsa.json:ro'
+        depends_on:
+            postgres:
+                condition: service_healthy
+        healthcheck:
+            test: ['CMD', 'wget', '--quiet', '--tries=1', '--spider', 'http://localhost:5678/healthz']
+            interval: 30s
+            timeout: 5s
+            retries: 3
+            start_period: 30s
+
 # Named volumes (persist across restarts — spec §Volume Strategy)
 # --------------------------------------------------------
 volumes:

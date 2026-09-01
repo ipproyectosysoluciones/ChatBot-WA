@@ -1,0 +1,87 @@
+{
+    "name": "CRM Webhook Entry",
+    "nodes": [
+        {
+            "parameters": {},
+            "name": "Webhook",
+            "type": "n8n-nodes-base.webhook",
+            "typeVersion": 1,
+            "position": [250, 300],
+            "webhookId": "crm-webhook",
+            "path": "webhook/crm",
+            "method": "POST"
+        },
+        {
+            "parameters": {
+                "authentication": "header",
+                "headerName": "X-CRM-Secret",
+                "expectedValue": "={{ $env.CRM_WEBHOOK_SECRET }}",
+                "failOnError": true
+            },
+            "name": "Header Auth",
+            "type": "n8n-nodes-base.code",
+            "typeVersion": 2,
+            "position": [450, 300]
+        },
+        {
+            "parameters": {
+                "assignments": {
+                    "assignments": [
+                        { "id": "event_type", "name": "event_type", "value": "={{ $json.event_type }}" },
+                        { "id": "occurred_at", "name": "occurred_at", "value": "={{ $json.occurred_at }}" },
+                        { "id": "payload", "name": "payload", "value": "={{ $json.payload }}" }
+                    ]
+                }
+            },
+            "name": "Set Fields",
+            "type": "n8n-nodes-base.set",
+            "typeVersion": 3,
+            "position": [650, 300]
+        },
+        {
+            "parameters": {
+                "rules": {
+                    "rules": [
+                        { "value": "appointment.created", "output": 0 },
+                        { "value": "appointment.updated", "output": 1 },
+                        { "value": "contact.captured", "output": 2 }
+                    ]
+                }
+            },
+            "name": "Switch by event_type",
+            "type": "n8n-nodes-base.switch",
+            "typeVersion": 2,
+            "position": [850, 300]
+        },
+        {
+            "parameters": {
+                "message": "Schema validation failed: event_type, occurred_at, or payload missing",
+                "statusCode": 422
+            },
+            "name": "Error Trigger",
+            "type": "n8n-nodes-base.respondToWebHook",
+            "typeVersion": 1,
+            "position": [1050, 300]
+        }
+    ],
+    "connections": {
+        "Webhook": {
+            "main": [[{ "node": "Header Auth", "type": "main", "index": 0 }]]
+        },
+        "Header Auth": {
+            "main": [[{ "node": "Set Fields", "type": "main", "index": 0 }]]
+        },
+        "Set Fields": {
+            "main": [[{ "node": "Switch by event_type", "type": "main", "index": 0 }]]
+        },
+        "Switch by event_type": {
+            "main": [[{ "node": "Error Trigger", "type": "main", "index": 0 }]]
+        }
+    },
+    "settings": { "executionOrder": "v1" },
+    "tags": ["crm", "webhook"],
+    "meta": {
+        "templateCredsSetupCompleted": true,
+        "instanceId": "crm-container-batch3"
+    }
+}

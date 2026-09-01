@@ -1,0 +1,59 @@
+{
+    "name": "Contact Handler",
+    "nodes": [
+        {
+            "parameters": {
+                "operation": "append",
+                "sheetId": "={{ $env.GOOGLE_SHEETS_ID }}",
+                "range": "A:E",
+                "columns": {
+                    "mode": "auto-detect",
+                    "detect": {
+                        "from": {
+                            "name": ["Name", "Phone", "Source", "Occurred At"],
+                            "row": 1
+                        }
+                    }
+                }
+            },
+            "name": "Google Sheets Append",
+            "type": "n8n-nodes-base.googleSheets",
+            "typeVersion": 4,
+            "position": [450, 300]
+        },
+        {
+            "parameters": {
+                "operation": "insert",
+                "tableName": "crm_events",
+                "columns": "event_type,payload_json,sheets_row_ref"
+            },
+            "name": "PG Insert Contact Event",
+            "type": "n8n-nodes-base.postgres",
+            "typeVersion": 2,
+            "position": [650, 300]
+        },
+        {
+            "parameters": {
+                "webhookUrl": "={{ $env.WEBHOOK_URL }}/webhook/crm",
+                "respondWith": {
+                    "respondWith": "json",
+                    "responseBody": {
+                        "status": "accepted",
+                        "event_type": "={{ $json.event_type }}",
+                        "sheets_row_ref": "={{ $json.sheets_row_ref }}"
+                    }
+                }
+            },
+            "name": "Respond Success",
+            "type": "n8n-nodes-base.respondToWebHook",
+            "typeVersion": 1,
+            "position": [850, 300]
+        }
+    ],
+    "connections": {
+        "Google Sheets Append": { "main": [[{ "node": "PG Insert Contact Event", "type": "main", "index": 0 }]] },
+        "PG Insert Contact Event": { "main": [[{ "node": "Respond Success", "type": "main", "index": 0 }]] }
+    },
+    "tags": ["crm", "contact", "sheets"],
+    "meta": { "instanceId": "crm-container-batch3" }
+}
