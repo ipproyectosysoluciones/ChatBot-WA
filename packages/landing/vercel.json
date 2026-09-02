@@ -2,5 +2,5 @@
   "framework": "nextjs",
   "buildCommand": "pnpm --filter @builderbot/landing build",
   "devCommand": "pnpm --filter @builderbot/landing dev",
-  "installCommand": "pnpm install"
+  "installCommand": "npm install"
 }
