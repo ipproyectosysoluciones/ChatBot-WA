@@ -10,6 +10,7 @@ const config: Config = {
     verbose: true,
     cache: true,
     testEnvironment: 'node',
+    setupFilesAfterEnv: ['<rootDir>/__tests__/test-setup-mock.ts'],
 }
 
 export default config
