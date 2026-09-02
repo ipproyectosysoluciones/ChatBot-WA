@@ -1,0 +1,44 @@
+name: 🌟 Feature Request
+description: Propuesta de nueva funcionalidad o mejora significativa
+title: '[🌟] {feature_title}'
+labels: [enhancement, triage]
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Gracias por tu propuesta.
+    - type: textarea
+      id: feature_description
+      attributes:
+          label: Descripción de la feature / mejora
+          description: 'Explain what it does, why it is needed, and the expected benefit.'
+          placeholder: 'Ej: Implementar componente Hero en packages/landing con responsive design...'
+      validations:
+          required: true
+    - type: dropdown
+      id: scope
+      attributes:
+          label: Ámbito / componente afectado
+          options:
+              - landing-page
+              - crm-container
+              - build-system
+              - tests
+              - documentation
+              - other
+      validations:
+          required: true
+    - type: input
+      id: conventional_title
+      attributes:
+          label: Título en conventional commits (opcional, se usará en el cuerpo)
+          placeholder: 'feat(landing): Hero + Layout Foundation'
+    - type: dropdown
+      id: risk_budget
+      attributes:
+          label: Riesgo de líneas (para chained-pr)
+          options:
+              - '<= 400 (single PR)'
+              - '> 400 (chained PR)'
+      validations:
+          required: false
