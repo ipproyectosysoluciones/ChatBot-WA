@@ -1,7 +1,7 @@
 {
     "framework": "nextjs",
-    "buildCommand": "pnpm --filter @builderbot/landing build",
+    "buildCommand": "pnpm build",
     "devCommand": "pnpm --filter @builderbot/landing dev",
-    "installCommand": "pnpm install",
+    "installCommand": "npm install --legacy-peer-deps --force",
     "outputDirectory": ".next"
 }

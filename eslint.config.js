@@ -15,6 +15,7 @@ module.exports = tseslint.config(
             'coverage/',
             '**/node_modules/**',
             '**/dist/**',
+            'packages/landing/.next/**',
             '**/*.config.js',
             '**/*.cjs',
             '**/bin/**',

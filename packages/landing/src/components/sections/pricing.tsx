@@ -1,7 +1,8 @@
-import * as React from 'react'
 import { Check } from 'lucide-react'
-import { Card } from '@/components/ui/card'
+import * as React from 'react'
+
 import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
 
 interface PricingPlan {
     name: string

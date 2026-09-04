@@ -34,7 +34,7 @@ EXPOSE 3000
 # HEALTHCHECK uses bot HTTP endpoint (spec §Health Checks)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
     CMD wget -qO- http://localhost:3000/health || exit 1
-CMD ["npm", "start"]
+CMD ["pnpm", "run", "start"]
 
 # ------------------------------------------------------------------
 # Production deploy stage — minimal runtime, non-root, read-only where possible
@@ -69,4 +69,4 @@ USER nodejs
 HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD wget -qO- http://localhost:${PORT}/health || exit 1
 
-CMD ["npm", "start"]
+CMD ["pnpm", "run", "start"]

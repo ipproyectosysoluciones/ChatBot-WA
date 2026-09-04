@@ -1,5 +1,6 @@
-import type * as React from 'react'
 import { Zap, Shield, Globe, Code2 } from 'lucide-react'
+import type * as React from 'react'
+
 import { Card } from '@/components/ui/card'
 
 interface FeatureItem {

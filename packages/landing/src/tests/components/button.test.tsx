@@ -1,10 +1,7 @@
-import { describe, it, expect } from 'vitest'
 import { render, screen } from '@testing-library/react'
-import { Button } from '@/components/ui/button'
-import fs from 'node:fs'
-import path from 'node:path'
+import { describe, it, expect } from 'vitest'
 
-const SRC_ROOT = path.resolve(__dirname, '../..')
+import { Button } from '@/components/ui/button'
 
 describe('Button (PR #1)', () => {
     it('renders as a <button> element', () => {
