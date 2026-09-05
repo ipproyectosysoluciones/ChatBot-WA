@@ -77,3 +77,5 @@ nonExistingFilePath
 /packages/provider-web-whatsapp/.wwebjs_auth/*.next/
 .vercel
 .env*
+# Local Pi runtime state
+.atl/
