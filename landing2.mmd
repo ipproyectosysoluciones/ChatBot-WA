@@ -1,0 +1,59 @@
+---
+references:
+  - "File: /packages/landing/src/components/sections/features.tsx"
+  - "File: /packages/landing/src/components/sections/pricing.tsx"
+  - "File: /packages/landing/src/components/ui/badge.tsx"
+  - "File: /packages/landing/src/components/ui/card.tsx"
+generationTime: 2026-09-02T15:24:56.215Z
+---
+flowchart TD
+    A["Landing sections render"] --> B["Features()"]
+    A --> C["Pricing()"]
+
+    subgraph Features["features.tsx"]
+        B --> D["Iterate features array"]
+        D --> E["FeatureCard(feature)"]
+        E --> F["Render Card with title and description"]
+        F --> G["Render feature icon"]
+        G --> H["Return feature card"]
+    end
+
+    subgraph Pricing["pricing.tsx"]
+        C --> I["Iterate plans array"]
+        I --> J["PricingCard(plan)"]
+        J --> K["Render Card with plan details"]
+        K --> L{"Plan has badge?"}
+        L -->|Yes| M["Render Badge"]
+        L -->|No| N["Skip badge"]
+        M --> O["Iterate plan features"]
+        N --> O
+        O --> P["Render Check icon and feature text"]
+        P --> Q["Render CTA footer link"]
+        Q --> R["Return pricing card"]
+    end
+
+    subgraph CardUI["card.tsx"]
+        F --> S["Card component"]
+        K --> S
+        S --> T{"Title provided?"}
+        T -->|Yes| U["Render title"]
+        T -->|No| V["Skip title"]
+        U --> W{"Description provided?"}
+        V --> W
+        W -->|Yes| X["Render description"]
+        W -->|No| Y["Skip description"]
+        X --> Z["Render children"]
+        Y --> Z
+        Z --> AA{"Footer provided?"}
+        AA -->|Yes| AB["Render footer"]
+        AA -->|No| AC["Skip footer"]
+        AB --> AD["Return div"]
+        AC --> AD
+    end
+
+    subgraph BadgeUI["badge.tsx"]
+        M --> AE["Resolve variant styles"]
+        AE --> AF["Call cn(className, variantStyles)"]
+        AF --> AG["Render span"]
+        AG --> AH["Return Badge"]
+    end

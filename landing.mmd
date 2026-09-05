@@ -1,0 +1,14 @@
+# Integración Landing Page — Tailwind v4 + PostCSS
+
+## Cambios
+- `postcss.config.mjs`: `@tailwindcss/postcss` (v4.3.3)
+- `packages/landing/package.json`: `tailwindcss` 4.3.3, `postcss` 8.5.3
+- `layout.tsx`: import corregido (`'./globals.css'`)
+- `postcss.config.mjs` creado (antes faltaba)
+
+## Estado
+- Build local: OK (`.next/static/css/694b75b1...css`, 28KB)
+- Deploy Vercel: READY (`landing-84f6ftmjb...`)
+- `.next/` ignorado: no editar archivos generados (`eslint.config.js`)
+- Tests preexistentes (`provider-baileys`, `bot`, `provider-gupshup`) fallan; no relacionados.
+- Push completado: `builderbot` rama actualizada en origin.

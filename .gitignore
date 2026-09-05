@@ -74,14 +74,14 @@ nonExistingFilePath
 /packages/provider-baileys/*_sessions
 /packages/provider-telegram/*_sessions
 /packages/provider-baileys/*.png
+# Landing / Pi runtime isolation
 /packages/provider-web-whatsapp/.wwebjs_auth/*
+/packages/provider-web-whatsapp/.wwebjs_auth/*.next/
 .env
-*.local.json
 .env.local
 .env.production
-# CRM secrets (n8n service-account key)
+*.local.json
 secrets/
-*.local.json
-.env
-.env.local
-.env.production
+.vercel
+.env*
+.atl/
