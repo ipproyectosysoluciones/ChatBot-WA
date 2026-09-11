@@ -1,7 +1,7 @@
 import { ProviderClass, utils } from '@builderbot/bot'
 import type { Vendor } from '@builderbot/bot/dist/provider/interface/provider'
 import type { BotContext, Button, GlobalVendorArgs, SendOptions } from '@builderbot/bot/dist/types'
-import { createReadStream } from 'fs'
+import { createReadStream, existsSync } from 'fs'
 import { writeFile } from 'fs/promises'
 import mime from 'mime-types'
 import { tmpdir } from 'os'
@@ -134,6 +134,12 @@ class VenomProvider extends ProviderClass {
     public indexHome: polka.Middleware = (req, res) => {
         const botName = req[this.idBotName]
         const qrPath = join(process.cwd(), `${botName}.qr.png`)
+
+        if (!existsSync(qrPath)) {
+            res.writeHead(404, { 'Content-Type': 'application/json' })
+            return res.end(JSON.stringify({ error: 'QR code not generated yet' }))
+        }
+
         const fileStream = createReadStream(qrPath)
         res.writeHead(200, { 'Content-Type': 'image/png' })
         fileStream.pipe(res)
@@ -184,21 +190,21 @@ class VenomProvider extends ProviderClass {
                 payload.from = venomCleanNumber(payload.from, true)
                 payload.name = `${payload.sender?.pushname}`
 
-                if (payload.hasOwnProperty('type') && ['image', 'video'].includes(payload.type)) {
+                if (Object.hasOwn(payload, 'type') && ['image', 'video'].includes(payload.type)) {
                     payload = {
                         ...payload,
                         body: utils.generateRefProvider('_event_media_'),
                     }
                 }
 
-                if (payload.hasOwnProperty('type') && ['document'].includes(payload.type)) {
+                if (Object.hasOwn(payload, 'type') && ['document'].includes(payload.type)) {
                     payload = { ...payload, body: utils.generateRefProvider('_event_document_') }
                 }
 
-                if (payload.hasOwnProperty('type') && ['ptt'].includes(payload.type)) {
+                if (Object.hasOwn(payload, 'type') && ['ptt'].includes(payload.type)) {
                     payload = { ...payload, body: utils.generateRefProvider('_event_voice_note_') }
                 }
-                if (payload.hasOwnProperty('lat') && payload.hasOwnProperty('lng')) {
+                if (Object.hasOwn(payload, 'lat') && Object.hasOwn(payload, 'lng')) {
                     const lat = payload.lat
                     const lng = payload.lng
                     if (lat !== '' && lng !== '') {
