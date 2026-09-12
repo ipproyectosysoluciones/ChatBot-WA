@@ -101,7 +101,7 @@ class VenomProvider extends ProviderClass {
 
     protected listenOnEvents(vendor: Vendor<venom.Whatsapp>): void {
         if (!vendor) {
-            throw Error(`Vendor should not return empty`)
+            throw new Error(`Vendor should not return empty`)
         }
 
         if (!this.vendor) {
