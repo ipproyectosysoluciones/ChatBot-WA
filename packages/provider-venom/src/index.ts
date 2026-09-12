@@ -190,21 +190,21 @@ class VenomProvider extends ProviderClass {
                 payload.from = venomCleanNumber(payload.from, true)
                 payload.name = `${payload.sender?.pushname}`
 
-                if (Object.hasOwn(payload, 'type') && ['image', 'video'].includes(payload.type)) {
+                if (payload.hasOwnProperty('type') && ['image', 'video'].includes(payload.type)) {
                     payload = {
                         ...payload,
                         body: utils.generateRefProvider('_event_media_'),
                     }
                 }
 
-                if (Object.hasOwn(payload, 'type') && ['document'].includes(payload.type)) {
+                if (payload.hasOwnProperty('type') && ['document'].includes(payload.type)) {
                     payload = { ...payload, body: utils.generateRefProvider('_event_document_') }
                 }
 
-                if (Object.hasOwn(payload, 'type') && ['ptt'].includes(payload.type)) {
+                if (payload.hasOwnProperty('type') && ['ptt'].includes(payload.type)) {
                     payload = { ...payload, body: utils.generateRefProvider('_event_voice_note_') }
                 }
-                if (Object.hasOwn(payload, 'lat') && Object.hasOwn(payload, 'lng')) {
+                if (payload.hasOwnProperty('lat') && payload.hasOwnProperty('lng')) {
                     const lat = payload.lat
                     const lng = payload.lng
                     if (lat !== '' && lng !== '') {
